@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" href="data:,">
+  <style>
+    body {
+      text-align: center;
+      font-family: "Trebuchet MS", Arial;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    .slider {
+      width: 300px;
+    }
+  </style>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+<body>
+  <h1>Lamp</h1>
+  <p>Position R: <span id="RedColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="RedSlider" onchange="updateColor()"/>
+  <p>Position G: <span id="GreenColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="GreenSlider" onchange="updateColor()"/>
+  <p>Position B: <span id="BlueColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="BlueSlider" onchange="updateColor()"/>
+  <script>
+    var RedSlider = document.getElementById("RedSlider");
+    var RedColor = document.getElementById("RedColor");
+    var GreenSlider = document.getElementById("GreenSlider");
+    var GreenColor = document.getElementById("GreenColor");
+    var BlueSlider = document.getElementById("BlueSlider");
+    var BlueColor = document.getElementById("BlueColor");
+
+    function updateColor() {
+      var red = RedSlider.value;
+      var green = GreenSlider.value;
+      var blue = BlueSlider.value;
+
+      RedColor.innerHTML = red;
+      GreenColor.innerHTML = green;
+      BlueColor.innerHTML = blue;
+
+      var rgbColor = "rgb(" + red + "," + green + "," + blue + ")";
+      document.body.style.background = rgbColor;
+
+      var textColor = getContrastingColor(red, green, blue);
+      document.body.style.color = textColor;
+    }
+
+    function getContrastingColor(red, green, blue) {
+      var luminance = (red * 299 + green * 587 + blue * 114) / 1000;
+      return (luminance >= 128) ? "#000000" : "#ffffff";
+    }
+
+    // Initialize slider values and colors
+    RedSlider.value = 4;
+    GreenSlider.value = 0;
+    BlueSlider.value = 240;
+    updateColor();
+  </script>
+</body>
+</html>
