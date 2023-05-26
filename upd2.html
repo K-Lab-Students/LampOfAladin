@@ -9,6 +9,7 @@
       font-family: "Trebuchet MS", Arial;
       margin-left:auto;
       margin-right:auto;
+      transition: background 0.5s ease;
     }
     .slider {
       width: 300px;
@@ -41,8 +42,8 @@
       GreenColor.innerHTML = green;
       BlueColor.innerHTML = blue;
 
-      var rgbColor = "rgb(" + red + "," + green + "," + blue + ")";
-      document.body.style.background = rgbColor;
+      var gradient = "linear-gradient(to right, rgb(0,0,0), rgb(" + red + "," + green + "," + blue + "), rgb(255,255,255))";
+      document.body.style.background = gradient;
 
       var textColor = getContrastingColor(red, green, blue);
       document.body.style.color = textColor;
