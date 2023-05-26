@@ -18,19 +18,33 @@
 </head>
 <body>
   <h1>Lamp</h1>
-  <p>Position R: <span id="servoPos"></span></p>
-  <input type="range" min="0" max="255" class="slider" id="servoSlider" onchange="servo(this.value)"/>
-  <p>Position G: <span id="servoPos"></span></p>
-  <input type="range" min="0" max="255" class="slider" id="servoSlider" onchange="servo(this.value)"/>
-  <p>Position B: <span id="servoPos"></span></p>
-  <input type="range" min="0" max="255" class="slider" id="servoSlider" onchange="servo(this.value)"/>
+  <p>Position R: <span id="RedColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="RedSlider" onchange="servo(this.value)"/>
+  <p>Position G: <span id="GreenColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="GreenSlider" onchange="servo(this.value)"/>
+  <p>Position B: <span id="BlueColor"></span></p>
+  <input type="range" min="0" max="255" class="slider" id="BlueSlider" onchange="servo(this.value)"/>
   <script>
-    var slider = document.getElementById("servoSlider");
-    var servoP = document.getElementById("servoPos");
-    servoP.innerHTML = slider.value;
-    slider.oninput = function() {
-      slider.value = this.value;
-      servoP.innerHTML = this.value;
+    var Rslider = document.getElementById("RedSlider");
+    var RC = document.getElementById("RedColor");
+    var Gslider = document.getElementById("GreenSlider");
+    var GC = document.getElementById("GeenColor");
+    var Bslider = document.getElementById("BlueSlider");
+    var BC = document.getElementById("BlueColor");
+    RC.innerHTML = Rslider.value;
+    Rslider.oninput = function() {
+      Rslider.value = this.value;
+      RC.innerHTML = this.value;
+    }
+    GC.innerHTML = Gslider.value;
+    Gslider.oninput = function() {
+      Gslider.value = this.value;
+      GC.innerHTML = this.value;
+    }
+    BC.innerHTML = Bslider.value;
+    Bslider.oninput = function() {
+      Bslider.value = this.value;
+      BC.innerHTML = this.value;
     }
     $.ajaxSetup({timeout:1000});
     function servo(pos) {
