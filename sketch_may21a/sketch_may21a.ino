@@ -4,17 +4,18 @@
 *********/
 
 #include <WiFi.h>
-#include <Servo.h>
-
-Servo myservo;  // create servo object to control a servo
+#include <Adafruit_NeoPixel.h>
+#define PIN 2
+#define BTN_1 0
+#define BTN_2 4
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(10, PIN, NEO_GRB + NEO_KHZ800);
 // twelve servo objects can be created on most boards
 
 // GPIO the servo is attached to
-static const int servoPin = 13;
 
 // Replace with your network credentials
-const char* ssid     = "REPLACE_WITH_YOUR_SSID";
-const char* password = "REPLACE_WITH_YOUR_PASSWORD";
+const char* ssid     = "K-Lab";
+const char* password = "allhailklab";
 
 // Set web server port number to 80
 WiFiServer server(80);
@@ -37,7 +38,6 @@ const long timeoutTime = 2000;
 void setup() {
   Serial.begin(115200);
 
-  myservo.attach(servoPin);  // attaches the servo on the servoPin to the servo object
 
   // Connect to Wi-Fi network with SSID and password
   Serial.print("Connecting to ");
@@ -81,38 +81,63 @@ void loop(){
             client.println();
 
             // Display the HTML web page
-            client.println("<!DOCTYPE html><html>");
-            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            client.println("<link rel=\"icon\" href=\"data:,\">");
-            // CSS to style the on/off buttons 
-            // Feel free to change the background-color and font-size attributes to fit your preferences
-            client.println("<style>body { text-align: center; font-family: \"Trebuchet MS\", Arial; margin-left:auto; margin-right:auto;}");
-            client.println(".slider { width: 300px; }</style>");
-            client.println("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>");
-                     
-            // Web Page
-            client.println("</head><body><h1>ESP32 with Servo</h1>");
-            client.println("<p>Position: <span id=\"servoPos\"></span></p>");          
-            client.println("<input type=\"range\" min=\"0\" max=\"180\" class=\"slider\" id=\"servoSlider\" onchange=\"servo(this.value)\" value=\""+valueString+"\"/>");
-            
-            client.println("<script>var slider = document.getElementById(\"servoSlider\");");
-            client.println("var servoP = document.getElementById(\"servoPos\"); servoP.innerHTML = slider.value;");
-            client.println("slider.oninput = function() { slider.value = this.value; servoP.innerHTML = this.value; }");
-            client.println("$.ajaxSetup({timeout:1000}); function servo(pos) { ");
-            client.println("$.get(\"/?value=\" + pos + \"&\"); {Connection: close};}</script>");
-           
-            client.println("</body></html>");     
+           client.println("<!DOCTYPE html><html><head>	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+client.println("<link rel=\"icon\" href=\"data:,\"><style> body { text-align: center;font-family: \"Trebuchet MS\", Arial;margin-left:auto;margin-right:auto;");
+client.println(" transition: background 0.5s ease;}.slider{width: 300px;}</style>");
+client.println("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>");
+client.println("</head><body><h1>Lamp</h1><p>Position R: <span id=\"RedColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"RedSlider\" onchange=\"updateColor()\"/>");
+client.println("<p>Position G: <span id=\"GreenColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"GreenSlider\" onchange=\"updateColor()\"/>");
+client.println("<p>Position B: <span id=\"BlueColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"BlueSlider\" onchange=\"updateColor()\"/>");
+client.println("<script>var RedSlider = document.getElementById(\"RedSlider\");var RedColor = document.getElementById(\"RedColor\");var GreenSlider = document.getElementById(\"GreenSlider\");");
+client.println("var GreenColor = document.getElementById(\"GreenColor\");var BlueSlider = document.getElementById(\"BlueSlider\");		var BlueColor = document.getElementById(\"BlueColor\");");
+client.println("function updateColor() {var red = RedSlider.value;var green = GreenSlider.value;var blue = BlueSlider.value;RedColor.innerHTML = red;GreenColor.innerHTML = green;");
+client.println("BlueColor.innerHTML = blue;var gradient = \"linear-gradient(to right, rgb(0,0,0), rgb(\" + red + \",\" + green + \",\" + blue + \"), rgb(255,255,255))\";");
+client.println("document.body.style.background = gradient;var textColor = getContrastingColor(red, green, blue);document.body.style.color = textColor;");
+			// Simulate a GET request to the server (not a real request)
+client.println("sendGetRequest(red, green, blue);} function getContrastingColor(red, green, blue) {	var luminance = (red * 299 + green * 587 + blue * 114) / 1000;");
+client.println("return (luminance >= 128) ? \"#000000\" : \"#ffffff\"; } function sendGetRequest(red, green, blue) {");
+// Simulated server-side handling (not a real server) // Replace this part with a real server-side implementation
+client.println("var xhr = new XMLHttpRequest();	var url = \"/example_server_endpoint\"; // Replace with the actual server endpoint");
+client.println("var params = \"red=\" + red + \"&green=\" + green + \"&blue=\" + blue; xhr.onreadystatechange = function() {");
+client.println("if (xhr.readyState === 4) {		// Optional: Handle the response from the server if needed");
+client.println("console.log(xhr.responseText);}}; xhr.open(\"GET\", url + \"?\" + params, true); xhr.send();} // Initialize slider values and colors");
+client.println("RedSlider.value = 4; GreenSlider.value = 0; BlueSlider.value = 240; updateColor(); </script> </body> </html>");
+
             
             //GET /?value=180& HTTP/1.1
-            if(header.indexOf("GET /?value=")>=0) {
-              pos1 = header.indexOf('=');
-              pos2 = header.indexOf('&');
-              valueString = header.substring(pos1+1, pos2);
-              
-              //Rotate the servo
-              myservo.write(valueString.toInt());
-              Serial.println(valueString); 
-            }         
+            if (header.indexOf("GET /?red=") >= 0 || header.indexOf("&green=") > 0 || header.indexOf("&blue=") > 0) {
+  // Extract the values of red, green, and blue from the header
+  pos1 = header.indexOf("red=");
+  pos2 = header.indexOf("&green=");
+  int red = header.substring(pos1 + 4, pos2).toInt();
+
+  pos1 = header.indexOf("&green=");
+  pos2 = header.indexOf("&blue=");
+  int green = header.substring(pos1 + 7, pos2).toInt();
+
+  pos1 = header.indexOf("&blue=");
+  int blue = header.substring(pos1 + 6).toInt();
+
+  // Print the RGB values to the serial monitor
+  Serial.print("Red: ");
+  Serial.print(red);
+  Serial.print(", Green: ");
+  Serial.print(green);
+  Serial.print(", Blue: ");
+  Serial.println(blue);
+  pixels.setPixelColor(0, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(1, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(2, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(3, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(4, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(5, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(6, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(7, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(8, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(9, pixels.Color(red,green, blue)); 
+  pixels.setPixelColor(10, pixels.Color(red,green, blue));
+  pixels.show();
+}     
             // The HTTP response ends with another blank line
             client.println();
             // Break out of the while loop

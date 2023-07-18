@@ -1,0 +1,21 @@
+client.println("<!DOCTYPE html><html><head>	<meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
+client.println("<link rel=\"icon\" href=\"data:,\"><style> body { text-align: center;font-family: \"Trebuchet MS\", Arial;margin-left:auto;margin-right:auto;");
+client.println(" transition: background 0.5s ease;}.slider{width: 300px;}</style>");
+client.println("<script src=\"https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js\"></script>");
+client.println("</head><body><h1>Lamp</h1><p>Position R: <span id=\"RedColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"RedSlider\" onchange=\"updateColor()\"/>");
+client.println("<p>Position G: <span id=\"GreenColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"GreenSlider\" onchange=\"updateColor()\"/>");
+client.println("<p>Position B: <span id=\"BlueColor\"></span></p><input type=\"range\" min=\"0\" max=\"255\" class=\"slider\" id=\"BlueSlider\" onchange=\"updateColor()\"/>");
+client.println("<script>var RedSlider = document.getElementById(\"RedSlider\");var RedColor = document.getElementById(\"RedColor\");var GreenSlider = document.getElementById(\"GreenSlider\");");
+client.println("var GreenColor = document.getElementById(\"GreenColor\");var BlueSlider = document.getElementById(\"BlueSlider\");		var BlueColor = document.getElementById(\"BlueColor\");");
+client.println("function updateColor() {var red = RedSlider.value;var green = GreenSlider.value;var blue = BlueSlider.value;RedColor.innerHTML = red;GreenColor.innerHTML = green;");
+client.println("BlueColor.innerHTML = blue;var gradient = \"linear-gradient(to right, rgb(0,0,0), rgb(\" + red + \",\" + green + \",\" + blue + \"), rgb(255,255,255))\";");
+client.println("document.body.style.background = gradient;var textColor = getContrastingColor(red, green, blue);document.body.style.color = textColor;");
+			// Simulate a GET request to the server (not a real request)
+client.println("sendGetRequest(red, green, blue);} function getContrastingColor(red, green, blue) {	var luminance = (red * 299 + green * 587 + blue * 114) / 1000;");
+client.println("return (luminance >= 128) ? \"#000000\" : \"#ffffff\"; } function sendGetRequest(red, green, blue) {");
+// Simulated server-side handling (not a real server) // Replace this part with a real server-side implementation
+client.println("var xhr = new XMLHttpRequest();	var url = \"/example_server_endpoint\"; // Replace with the actual server endpoint");
+client.println("var params = \"red=\" + red + \"&green=\" + green + \"&blue=\" + blue; xhr.onreadystatechange = function() {");
+client.println("if (xhr.readyState === 4) {		// Optional: Handle the response from the server if needed");
+client.println("console.log(xhr.responseText);}}; xhr.open(\"GET\", url + \"?\" + params, true); xhr.send();} // Initialize slider values and colors");
+client.println("RedSlider.value = 4; GreenSlider.value = 0; BlueSlider.value = 240; updateColor(); </script> </body> </html>");
